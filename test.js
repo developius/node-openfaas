@@ -1,23 +1,21 @@
-'use strict';
-
-const test = require('tape');
-const nock = require('nock');
-const BbPromise = require('bluebird');
-const FaaS = require('./openfaas');
+const test = require('tape')
+const nock = require('nock')
+const OpenFaaS = require('./openfaas')
 
 test('Test typeofs', t => {
-	t.plan(6);
+	t.plan(7)
 
-	t.equals(typeof FaaS, 'function');
+	t.equals(typeof OpenFaaS, 'function')
 
-	const faas = FaaS('http://localhost:8080');
+	const openfaas = new OpenFaaS('http://localhost:8080')
 
-	t.equals(typeof faas, 'object');
-	t.equals(typeof faas.deploy, 'function');
-	t.equals(typeof faas.invoke, 'function');
-	t.equals(typeof faas.compose, 'function');
-	t.equals(typeof faas.remove, 'function');
-});
+	t.equals(typeof openfaas, 'object')
+	t.equals(typeof openfaas.deploy, 'function')
+	t.equals(typeof openfaas.invoke, 'function')
+	t.equals(typeof openfaas.compose, 'function')
+	t.equals(typeof openfaas.remove, 'function')
+	t.equals(typeof openfaas.inspect, 'function')
+})
 
 test('Test full API', t => {
 
@@ -27,34 +25,45 @@ test('Test full API', t => {
 			network: 'func_functions',
 			image: 'hello-serverless'
 		}).reply(200)
-		.post('/function/test-func').reply(200, {status: 'done'})
+		.post('/function/test-func').reply(200, { status: 'done' })
 		.post('/function/func_nodeinfo').reply(200, 'hello cruel world')
 		.post('/function/func_echoit', 'hello cruel world').reply(200, 'hello cruel world')
 		.post('/function/func_wordcount', 'hello cruel world').reply(200, 3)
-		.delete('/system/functions', {functionName: 'test-func'}).reply(200);
+		.get('/system/functions').reply(200)
+		.delete('/system/functions', { functionName: 'test-func' }).reply(200)
 
-	t.plan(5);
-	const faas = FaaS('http://localhost:8080');
+	t.plan(4)
+	const openfaas = new OpenFaaS('http://localhost:8080')
 
-	faas.deploy(
+	openfaas.deploy(
 		'test-func',
-		'func_functions',
 		'hello-serverless'
 	)
 		.then(x => t.equals(x.statusCode, 200))
-		.then(() => faas.invoke('test-func',null, true))
-		.then(x => t.same(x.body, {status: 'done'}))
-		.then(() => faas.compose('', [
+		.then(() => openfaas.invoke('test-func', null, true))
+		.then(x => t.equals(x.body, JSON.stringify({ status: 'done' })))
+		.then(() => openfaas.compose('', [
 			'func_nodeinfo',
 			'func_echoit',
 			'func_wordcount'
-		]
-		))
+		]))
 		.then(x => {
 			t.equals(x.statusCode, 200)
 			t.equals(x.body, '3')
 		})
-		.then(() => faas.remove('test-func'))
+		.then(() => openfaas.inspect('test-func'))
+		.then(x => {
+			t.equals(x.statusCode, 200)
+			t.equals(x.body, JSON.stringify({
+				name: 'test-func',
+				image: 'hello-serverless',
+				invocationCount: 0,
+				replicas: 1,
+				envProcess: ''
+			}))
+		})
+		.then(() => openfaas.remove('test-func'))
 		.then(x => t.equals(x.statusCode, 200))
-		.catch(err => console.log(err));
-});
+		.catch(console.log)
+})
+
