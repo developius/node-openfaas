@@ -10,7 +10,6 @@
   "author": "Austin Frey",
   "license": "MIT",
   "dependencies": {
-    "bluebird": "^3.5.0",
     "got": "^7.1.0"
   },
   "devDependencies": {
