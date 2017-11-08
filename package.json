@@ -4,7 +4,7 @@
   "description": "NodeJS wrapper around the OpenFaaS Gateway API w/ some additional helper functions",
   "main": "index.js",
   "scripts": {
-    "test": "node test",
+    "test": "xo && node test",
     "lint": "xo --fix"
   },
   "author": "Austin Frey",
@@ -28,5 +28,11 @@
   "bugs": {
     "url": "https://github.com/austinfrey/node-openfaas/issues"
   },
-  "homepage": "https://github.com/austinfrey/node-openfaas#readme"
+  "homepage": "https://github.com/austinfrey/node-openfaas#readme",
+  "xo": {
+    "semicolon": false,
+    "rules": {
+      "object-curly-spacing": "off"
+    }
+  }
 }
