@@ -10,7 +10,6 @@
   "author": "Austin Frey",
   "license": "MIT",
   "dependencies": {
-    "bluebird": "^3.5.0",
     "got": "^7.1.0"
   },
   "devDependencies": {
@@ -20,14 +19,38 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/austinfrey/node-openfaas.git"
+    "url": "git+https://github.com/openfaas-incubator/node-openfaas.git"
   },
   "keywords": [
     "serverless",
-    "FaaS"
+    "OpenFaaS"
   ],
   "bugs": {
-    "url": "https://github.com/austinfrey/node-openfaas/issues"
+    "url": "https://github.com/openfaas-incubator/node-openfaas/issues"
   },
-  "homepage": "https://github.com/austinfrey/node-openfaas#readme"
+  "homepage": "https://github.com/openfaas-incubator/node-openfaas#readme",
+  "xo": {
+    "space": true,
+    "semicolon": false,
+    "rules": {
+      "curly": [
+        "error",
+        "multi-line"
+      ],
+      "object-curly-spacing": [
+        "error",
+        "always"
+      ],
+      "array-bracket-spacing": [
+        "warn",
+        "always",
+        {
+          "singleValue": true,
+          "objectsInArrays": false
+        }
+      ],
+      "capitalized-comments": "off",
+      "eqeqeq": "off"
+    }
+  }
 }
